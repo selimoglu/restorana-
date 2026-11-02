@@ -2,10 +2,21 @@
 
 :root {
   --brand: #c2410c;
+  /* Varsayılanlar; asıl değerler src/lib/brand.ts içinden basılır. */
+  --site-primary: #0f7a4a;
+  --site-primary-dark: #0a5a37;
+  --site-ink: #0b2a1d;
+  --site-soft: #e8f5ee;
+  --site-accent: #c8f169;
 }
 
 @theme inline {
   --color-brand: var(--brand);
+  --color-site: var(--site-primary);
+  --color-site-dark: var(--site-primary-dark);
+  --color-ink: var(--site-ink);
+  --color-soft: var(--site-soft);
+  --color-accent: var(--site-accent);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -33,4 +44,32 @@ body {
 .card {
   @apply rounded-2xl border border-stone-200 bg-white p-5 shadow-sm;
 }
+/* Tanıtım sitesi */
+.btn-site {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition bg-site text-white hover:bg-site-dark;
+}
+.btn-site-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition border border-ink/20 bg-white text-ink hover:border-ink/50;
+}
+.btn-site-light {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition bg-white text-ink hover:bg-soft;
+}
+.site-h2 {
+  @apply text-3xl font-extrabold tracking-tight text-ink sm:text-5xl;
+}
+.eyebrow {
+  @apply text-sm font-bold uppercase tracking-wider text-site;
+}
+}
+
+.hero-gradient {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--site-accent) 45%, transparent), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, color-mix(in srgb, var(--site-primary) 30%, transparent), transparent 60%),
+    var(--site-soft);
+}
+.ink-gradient {
+  background:
+    radial-gradient(900px 400px at 100% 0%, color-mix(in srgb, var(--site-primary) 55%, transparent), transparent 60%),
+    var(--site-ink);
 }

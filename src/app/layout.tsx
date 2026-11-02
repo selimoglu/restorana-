@@ -12,6 +12,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr">
+      <head>
+        <style
+          // Marka renkleri src/lib/brand.ts dosyasından gelir.
+          dangerouslySetInnerHTML={{
+            __html: `:root{--site-primary:${BRAND.colors.primary};--site-primary-dark:${BRAND.colors.primaryDark};--site-ink:${BRAND.colors.ink};--site-soft:${BRAND.colors.soft};--site-accent:${BRAND.colors.accent}}`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

@@ -17,7 +17,7 @@ export function CommissionCalculator() {
       <Slider label="Ortalama sepet" value={basket} min={100} max={2000} step={25} onChange={setBasket} prefix="₺" />
       <Slider label="Komisyon + hizmet bedeli" value={rate} min={10} max={40} step={1} onChange={setRate} prefix="%" />
       <Slider label="Kendi kanalınıza taşınan sipariş oranı" value={share} min={10} max={80} step={5} onChange={setShare} prefix="%" />
-      <div className="rounded-xl bg-stone-900 p-4 text-white">
+      <div className="rounded-xl bg-ink p-4 text-white">
         <p className="text-sm text-white/70">Şu an platforma ödediğiniz: {fmt(monthly)} / ay</p>
         <p className="mt-1 text-2xl font-bold">Tahmini tasarruf: {fmt(saved)} / ay</p>
         <p className="text-sm text-white/70">Yılda yaklaşık {fmt(saved * 12)}</p>
@@ -41,7 +41,7 @@ function Slider({
           {suffix}
         </strong>
       </span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="mt-1 w-full accent-stone-900" />
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="mt-1 w-full accent-site" />
     </label>
   );
 }

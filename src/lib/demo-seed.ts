@@ -54,7 +54,7 @@ export async function seedDemo(db: PrismaClient) {
       deliveryFee: 3000,
       freeDeliveryMin: 50000,
       minOrder: 15000,
-      plan: "buyume",
+      plan: "sabit",
       users: { create: { email: "demo@sofra.app", name: "Demo İşletme", passwordHash: hashPassword("demo1234") } },
       coupons: { create: [{ code: "HOSGELDIN", percentOff: 15, minOrder: 30000 }, { code: "OZLEDIK", percentOff: 10 }] },
     },
