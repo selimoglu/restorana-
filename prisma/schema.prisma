@@ -1,0 +1,191 @@
+// PostgreSQL (canlıda Supabase). Tablolar "sofra" şemasında durur:
+// DATABASE_URL sonuna ?schema=sofra ekleyin.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tutarlar kuruş cinsinden tam sayı olarak saklanır (12550 = 125,50 TL).
+
+model Restaurant {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  tagline         String   @default("")
+  about           String   @default("")
+  cuisine         String   @default("")
+  phone           String   @default("")
+  whatsapp        String   @default("")
+  address         String   @default("")
+  city            String   @default("İstanbul")
+  district        String   @default("")
+  instagram       String   @default("")
+  googleReviewUrl String   @default("")
+  heroImageUrl    String   @default("")
+  primaryColor    String   @default("#c2410c")
+  openingHours    String   @default("{}") // JSON: { "pzt": "11:00-23:00", ... }
+  pickupEnabled   Boolean  @default(true)
+  deliveryEnabled Boolean  @default(true)
+  deliveryFee     Int      @default(0)
+  freeDeliveryMin Int      @default(0)
+  minOrder        Int      @default(0)
+  prepMinutes     Int      @default(20)
+  loyaltyPercent  Int      @default(5) // harcamanın % kaçı puan olarak döner
+  cashOnDelivery  Boolean  @default(true)
+  cardOnDelivery  Boolean  @default(true)
+  onlinePayment   Boolean  @default(true)
+  isOpen          Boolean  @default(true)
+  plan            String   @default("baslangic")
+  createdAt       DateTime @default(now())
+
+  users      User[]
+  categories Category[]
+  items      MenuItem[]
+  customers  Customer[]
+  orders     Order[]
+  campaigns  Campaign[]
+  reviews    Review[]
+  coupons    Coupon[]
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         String     @default("owner") // owner | staff
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+  createdAt    DateTime   @default(now())
+}
+
+model Category {
+  id           String     @id @default(cuid())
+  name         String
+  sort         Int        @default(0)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+  items        MenuItem[]
+}
+
+model MenuItem {
+  id           String     @id @default(cuid())
+  name         String
+  description  String     @default("")
+  price        Int
+  imageUrl     String     @default("")
+  isAvailable  Boolean    @default(true)
+  isPopular    Boolean    @default(false)
+  isUpsell     Boolean    @default(false) // sepette "yanına iyi gider" önerisi
+  allergens    String     @default("")
+  sort         Int        @default(0)
+  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+  orderItems   OrderItem[]
+}
+
+model Customer {
+  id               String     @id @default(cuid())
+  name             String
+  phone            String
+  email            String     @default("")
+  points           Int        @default(0) // kuruş değerinde puan
+  orderCount       Int        @default(0)
+  totalSpent       Int        @default(0)
+  lastOrderAt      DateTime?
+  marketingConsent Boolean    @default(false) // İYS ticari ileti onayı
+  kvkkConsentAt    DateTime?
+  restaurant       Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId     String
+  orders           Order[]
+  createdAt        DateTime   @default(now())
+
+  @@unique([restaurantId, phone])
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  number         Int
+  type           String // PICKUP | DELIVERY | CATERING
+  status         String      @default("NEW") // NEW | ACCEPTED | PREPARING | READY | ON_THE_WAY | COMPLETED | CANCELLED
+  paymentMethod  String // ONLINE | CASH | CARD_ON_DELIVERY
+  paymentStatus  String      @default("PENDING") // PENDING | PAID | FAILED
+  paymentRef     String      @default("")
+  subtotal       Int
+  deliveryFee    Int         @default(0)
+  discount       Int         @default(0)
+  pointsUsed     Int         @default(0)
+  total          Int
+  address        String      @default("")
+  note           String      @default("")
+  scheduledFor   DateTime?
+  pointsEarned   Int         @default(0)
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  customerId     String
+  restaurant     Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId   String
+  items          OrderItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([restaurantId, number])
+}
+
+model OrderItem {
+  id         String    @id @default(cuid())
+  name       String
+  unitPrice  Int
+  quantity   Int
+  note       String    @default("")
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    String
+  menuItem   MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  menuItemId String?
+}
+
+model Campaign {
+  id           String     @id @default(cuid())
+  name         String
+  channel      String // SMS | EMAIL | WHATSAPP
+  audience     String // ALL | LAPSED | VIP | NEW
+  message      String
+  status       String     @default("DRAFT") // DRAFT | SENT | ACTIVE
+  automation   String     @default("") // "" | WIN_BACK | BIRTHDAY | FIRST_ORDER_THANKS
+  sentCount    Int        @default(0)
+  sentAt       DateTime?
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+  createdAt    DateTime   @default(now())
+}
+
+model Review {
+  id           String     @id @default(cuid())
+  customerName String
+  rating       Int
+  comment      String     @default("")
+  reply        String     @default("")
+  isPublic     Boolean    @default(true)
+  orderId      String?
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+  createdAt    DateTime   @default(now())
+}
+
+model Coupon {
+  id           String     @id @default(cuid())
+  code         String
+  percentOff   Int        @default(0)
+  amountOff    Int        @default(0)
+  minOrder     Int        @default(0)
+  isActive     Boolean    @default(true)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+
+  @@unique([restaurantId, code])
+}
