@@ -2,7 +2,7 @@
 
 Türkiye'deki restoranlara komisyonsuz online sipariş, AI ile hazırlanan web sitesi, sadakat programı ve otomatik pazarlama sunan çok kiracılı (multi-tenant) bir SaaS.
 
-> Ürün adı ve paket fiyatları `src/lib/brand.ts` dosyasından tek yerden değiştirilebilir.
+> Ürün adı, renkler, paket fiyatları ve ürün menüsü `src/lib/brand.ts` dosyasından tek yerden değiştirilebilir.
 
 ## Hızlı başlangıç
 
@@ -63,7 +63,7 @@ Anahtar girilmeden de her şey çalışır: AI, iyzico, SMS ve e-posta **demo mo
 
 | Klasör | İçerik |
 |---|---|
-| `src/app/page.tsx` | SaaS tanıtım sayfası, komisyon hesaplayıcı, fiyatlar |
+| `src/app/(site)` | Tanıtım sitesi: ana sayfa, fiyatlar, nasıl çalışır, ücretsiz görünürlük raporu |
 | `src/app/r/[slug]` | Restoranın sitesi, sepet, ödeme, sipariş takibi, PWA manifest |
 | `src/app/panel` | Yönetim paneli |
 | `src/app/api` | Sipariş oluşturma, iyzico dönüşü, AI asistan, cron |
