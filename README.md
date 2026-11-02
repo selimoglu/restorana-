@@ -7,9 +7,10 @@ Türkiye'deki restoranlara komisyonsuz online sipariş, AI ile hazırlanan web s
 ## Hızlı başlangıç
 
 ```bash
+docker run -d --name sofra-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:17   # yerel PostgreSQL
 npm install
 cp .env.example .env        # gerekirse anahtarları doldurun
-npm run db:push             # veritabanı tablolarını oluşturur (SQLite)
+npm run db:push             # veritabanı tablolarını oluşturur
 npm run db:seed             # örnek restoran: "Lezzet Durağı"
 npm run dev
 ```
@@ -56,7 +57,7 @@ Anahtar girilmeden de her şey çalışır: AI, iyzico, SMS ve e-posta **demo mo
 ## Mimari
 
 - **Next.js 15 (App Router) + TypeScript + Tailwind CSS 4**
-- **Prisma**: geliştirmede SQLite; canlıda `prisma/schema.prisma` içindeki `provider`'ı `postgresql` yapıp `DATABASE_URL`'i (ör. Supabase) verin.
+- **Prisma + PostgreSQL** (canlıda Supabase, Frankfurt). Tablolar `sofra` şemasında durur; ilk şema `prisma/migrations/0001_init` içinde.
 - Tutarlar veritabanında **kuruş** cinsinden tam sayı tutulur. Sipariş fiyatları her zaman sunucuda veritabanından hesaplanır.
 - Panel işlemleri Server Actions ile yapılır, her sorgu oturumdaki restorana göre filtrelenir.
 
@@ -74,6 +75,13 @@ Anahtar girilmeden de her şey çalışır: AI, iyzico, SMS ve e-posta **demo mo
 
 `.env.example` dosyasına bakın. Canlıya çıkarken en az `DATABASE_URL`, `SESSION_SECRET`, `NEXT_PUBLIC_APP_URL` ve `CRON_SECRET` gerekli.
 Otomatik kampanyalar için `/api/cron/otomasyonlar` uç noktasının günde bir kez `Authorization: Bearer $CRON_SECRET` ile çağrılması gerekir (`vercel.json` içinde Vercel Cron tanımlı).
+
+## Canlı ortam (Vercel + Supabase)
+
+- Vercel projesi GitHub'a bağlı: `main`'e her push canlıya çıkar, PR'lar önizleme alır. Fonksiyonlar Frankfurt (`fra1`) bölgesinde çalışır.
+- Ortam değişkenleri Vercel proje ayarlarında tanımlı (`DATABASE_URL`, `SESSION_SECRET`, `CRON_SECRET`, `NEXT_PUBLIC_APP_URL`).
+- Sağlık kontrolü: `GET /api/saglik`
+- Demo restoranı oluşturmak/sıfırlamak: `curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://SITE/api/kurulum/demo`
 
 ## Yayına almadan önce
 

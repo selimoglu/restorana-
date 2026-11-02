@@ -1,11 +1,11 @@
-// Geliştirmede SQLite, canlıda PostgreSQL (ör. Supabase) kullanın:
-// provider = "postgresql" yapıp DATABASE_URL'i değiştirmeniz yeterli.
+// PostgreSQL (canlıda Supabase). Tablolar "sofra" şemasında durur:
+// DATABASE_URL sonuna ?schema=sofra ekleyin.
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
